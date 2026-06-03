@@ -1,27 +1,30 @@
-import React, { useState } from 'react'
-import { setLocalStorage } from '../../utils/localStorage'
+import React from 'react'
 
 const Header = (props) => {
+  const username = props.data ? props.data.firstName : 'Director'
 
-  // const [username, setUsername] = useState('')
-
-  // if(!data){
-  //   setUsername('Admin')
-  // }else{
-  //   setUsername(data.firstName)
-  // }
-
-  const logOutUser = ()=>{
-    localStorage.setItem('loggedInUser','')
+  const logOutUser = () => {
+    localStorage.setItem('loggedInUser', '')
     props.changeUser('')
-    // window.location.reload()
   }
 
-  
   return (
-    <div className='flex items-end justify-between'>
-        <h1 className='text-2xl font-medium'>Hello <br /> <span className='text-3xl font-semibold'>username 👋</span></h1>
-        <button onClick={logOutUser} className='bg-red-600 text-base font-medium text-white px-5 py-2 rounded-sm'>Log Out</button>
+    <div className='flex items-center justify-between pb-5 border-b border-slate-800/80 mb-6'>
+      <div>
+        <span className='text-xs font-semibold uppercase tracking-widest text-slate-500'>Dashboard Sync</span>
+        <h1 className='text-xl font-medium text-slate-300 mt-0.5'>
+          Welcome back,{' '}
+          <span className='text-2xl font-bold bg-gradient-to-r from-indigo-400 via-violet-300 to-indigo-300 bg-clip-text text-transparent block md:inline'>
+            {username} 👋
+          </span>
+        </h1>
+      </div>
+      <button 
+        onClick={logOutUser} 
+        className='bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 text-xs md:text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-200 shadow-md hover:shadow-rose-950/20 active:scale-95 outline-none'
+      >
+        Terminate Sync
+      </button>
     </div>
   )
 }

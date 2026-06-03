@@ -16,83 +16,125 @@ const CreateTask = () => {
     const submitHandler = (e) => {
         e.preventDefault()
 
-        setNewTask({ taskTitle, taskDescription, taskDate, category, active: false, newTask: true, failed: false, completed: false })
+        const taskItem = { 
+            taskTitle, 
+            taskDescription, 
+            taskDate, 
+            category, 
+            active: false, 
+            newTask: true, 
+            failed: false, 
+            completed: false 
+        }
 
-        const data = userData
+        const data = [...userData]
 
+        let found = false
         data.forEach(function (elem) {
-            if (asignTo == elem.firstName) {
-                elem.tasks.push(newTask)
-                elem.taskCounts.newTask = elem.taskCounts.newTask + 1
+            if (asignTo.trim().toLowerCase() === elem.firstName.trim().toLowerCase()) {
+                elem.tasks.push(taskItem)
+                elem.taskCounts.newTask = (elem.taskCounts.newTask || 0) + 1
+                found = true
             }
         })
+
+        if (!found) {
+            alert(`Teammate "${asignTo}" not found in current registry. Try "Alex" or "Sophia".`)
+            return
+        }
+
         setUserData(data)
-        console.log(data);
+        // Persist update back to localStorage
+        localStorage.setItem('employees', JSON.stringify(data))
 
         setTaskTitle('')
         setCategory('')
         setAsignTo('')
         setTaskDate('')
         setTaskDescription('')
-
     }
 
     return (
-        <div className='p-5 bg-[#1c1c1c] mt-5 rounded'>
-            <form onSubmit={(e) => {
-                submitHandler(e)
-            }}
-                className='flex flex-wrap w-full items-start justify-between'
-            >
-                <div className='w-1/2'>
+        <div className='p-6 md:p-8 bg-slate-900/60 backdrop-blur-md border border-slate-800/80 mt-6 rounded-2xl shadow-xl'>
+            <h2 className="text-xl font-bold text-slate-100 mb-6 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-indigo-500"></span>
+                Initiate New Workspace Sync
+            </h2>
+            <form onSubmit={submitHandler} className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+                <div className='space-y-4'>
                     <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Task Title</h3>
+                        <label className='block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1'>
+                            Objective Title
+                        </label>
                         <input
                             value={taskTitle}
-                            onChange={(e) => {
-                                setTaskTitle(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="text" placeholder='Make a UI design'
+                            onChange={(e) => setTaskTitle(e.target.value)}
+                            required
+                            className='w-full bg-slate-950/40 border border-slate-800 rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 text-slate-100 text-sm transition-all duration-200 placeholder:text-slate-600' 
+                            type="text" 
+                            placeholder='Re-architect Portal Interface'
                         />
                     </div>
+                    
                     <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Date</h3>
+                        <label className='block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1'>
+                            Target Completion Date
+                        </label>
                         <input
                             value={taskDate}
-                            onChange={(e) => {
-                                setTaskDate(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="date" />
+                            onChange={(e) => setTaskDate(e.target.value)}
+                            required
+                            className='w-full bg-slate-950/40 border border-slate-800 rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 text-slate-100 text-sm transition-all duration-200' 
+                            type="date" 
+                        />
                     </div>
+                    
                     <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Asign to</h3>
+                        <label className='block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1'>
+                            Assignee Teammate (First Name)
+                        </label>
                         <input
                             value={asignTo}
-                            onChange={(e) => {
-                                setAsignTo(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="text" placeholder='employee name' />
+                            onChange={(e) => setAsignTo(e.target.value)}
+                            required
+                            className='w-full bg-slate-950/40 border border-slate-800 rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 text-slate-100 text-sm transition-all duration-200 placeholder:text-slate-600' 
+                            type="text" 
+                            placeholder='e.g., Alex, Sophia'
+                        />
                     </div>
+                    
                     <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Category</h3>
+                        <label className='block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1'>
+                            Classification / Tag
+                        </label>
                         <input
                             value={category}
-                            onChange={(e) => {
-                                setCategory(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' type="text" placeholder='design, dev, etc' />
+                            onChange={(e) => setCategory(e.target.value)}
+                            required
+                            className='w-full bg-slate-950/40 border border-slate-800 rounded-xl py-2.5 px-4 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 text-slate-100 text-sm transition-all duration-200 placeholder:text-slate-600' 
+                            type="text" 
+                            placeholder='Interface Design, Core Engineering'
+                        />
                     </div>
                 </div>
 
-                <div className='w-2/5 flex flex-col items-start'>
-                    <h3 className='text-sm text-gray-300 mb-0.5'>Description</h3>
-                    <textarea value={taskDescription}
-                        onChange={(e) => {
-                            setTaskDescription(e.target.value)
-                        }} className='w-full h-44 text-sm py-2 px-4 rounded outline-none bg-transparent border-[1px] border-gray-400' name="" id=""></textarea>
-                    <button className='bg-emerald-500 py-3 hover:bg-emerald-600 px-5 rounded text-sm mt-4 w-full'>Create Task</button>
+                <div className='flex flex-col h-full justify-between'>
+                    <div className="flex-1 flex flex-col">
+                        <label className='block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1'>
+                            Detailed Directives & Scope
+                        </label>
+                        <textarea 
+                            value={taskDescription}
+                            onChange={(e) => setTaskDescription(e.target.value)} 
+                            required
+                            className='w-full flex-1 min-h-[140px] bg-slate-950/40 border border-slate-800 rounded-xl py-3 px-4 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/40 text-slate-100 text-sm transition-all duration-200 placeholder:text-slate-600 resize-none' 
+                            placeholder='Outline objectives, technical constraints, and telemetry validation targets...'
+                        ></textarea>
+                    </div>
+                    <button className='w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-[0.99] mt-6 text-sm outline-none'>
+                        Initiate Sync
+                    </button>
                 </div>
-
             </form>
         </div>
     )
